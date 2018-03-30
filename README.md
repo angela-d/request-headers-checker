@@ -33,4 +33,4 @@ If you run Wordpress, security by obscurity won't protect you on its own, but it
 
 Simply disabling headers that give clues into poor security practices won't protect you, but if your organization has a lot of red tape you have to go through for OS patches and updates, obfuscating much sought after information can buy you a little time.
 
-## [:link: Install Instructions](installing-instructions.md) ##
+## [:link: Install Instructions](install-instructions.md) ##
