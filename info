@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+
+""" Status Checker to detect response codes and server information """
+
+import pprint
+from json import dumps, loads
+import sys
+from ssl import create_default_context
+import socket
+from argparse import ArgumentParser
+from requests import get, exceptions
+
+VER_INFO = ArgumentParser(description='A Python tool to get header \
+information from a website.\nhttp:// or https:// are required.')
+VER_INFO.add_argument('--version', '-v', action='version', version='%(prog)s 1.0')
+
+ARG_PARSE = vars(VER_INFO.parse_args())
+
+def startup():
+    """ Startup """
+    try:
+        print("\t\tPython tool to check server headers.\n\
+        Enter the url you wish to investigate, including the http(s)://")
+
+        entered_url = input("URL: ")
+        get_http_info(entered_url)
+
+    # if a user chooses to cancel their session before processing a url
+    except KeyboardInterrupt:
+        print('\nExiting..')
+        sys.exit(0)
+    except EOFError:
+        print('\nExiting..')
+        sys.exit(0)
+
+def get_http_info(url):
+    """ Parse the user-entered URL """
+    # try & circumvent user agent blocking for python requests
+    spoof_agent = {
+        'Accept-Language': 'en-US,en;q=0.5',
+        'User-Agent'     : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/55.0', # pylint: disable=C0301
+        'Accept'         : 'text/html,application/xhtml+xml,application/xml;q =0.9,*/*;q=0.8',
+        'Referrer'       : 'https://startpage.com'
+    }
+
+    try:
+        access_url = get(url, headers=spoof_agent)
+        if len(access_url.history) < 1:
+            # normal request
+            print('\n\t\t----- Headers for', url, ' -----')
+            print("\nHTTP Response: " + str(access_url.status_code))
+
+            request_header = dumps(dict(access_url.headers))
+            format_headers = pprint.PrettyPrinter(indent=2)
+            format_headers.pprint(loads(request_header))
+
+            # obtain ssl issuer information (if https)
+            if 'https:' in url:
+                print('\n\t\t----- SSL Headers for', url, ' -----')
+                hostname = url.split("//")[-1].split("/")[0].split('?')[0]
+
+                context = create_default_context()
+                server  = context.wrap_socket(socket.socket(), server_hostname=hostname) #pylint: disable=C0326
+                server.connect((hostname, 443))
+                cert = server.getpeercert()
+
+                issued = dict(extract[0] for extract in cert['subject'])
+                issuer = dict(extract[0] for extract in cert['issuer'])
+
+                print('SSL cert issued to', issued['commonName'], 'by', issuer['commonName'],\
+                'on', cert['notBefore'], 'expires', cert['notAfter'])
+
+        else:
+            # redirects detected
+            print('\n\t\t----- Redirect(s) detected for', url, ' -----')
+
+            redirect_status = get(url, allow_redirects=False)
+            print(redirect_status.status_code, 'from', url, \
+            'to', redirect_status.headers['Location'])
+
+    # some errors encountered
+    except exceptions.InvalidSchema as show_error:
+        print(show_error)
+        startup()
+    except exceptions.MissingSchema as show_error:
+        print(show_error)
+        startup()
+    except exceptions.ConnectionError:
+        print("Took too long to connect; ensure the URL is valid and try again.")
+        sys.exit(1)
+    except exceptions.Timeout:
+        print("Timeout.  Server might be offline or not responding.")
+        sys.exit(1)
+    except exceptions.TooManyRedirects:
+        print("Infinite Redirects.  Site is poorly configured.")
+        sys.exit(1)
+
+startup()
