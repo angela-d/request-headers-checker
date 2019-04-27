@@ -1,0 +1,16 @@
+Source: reqhead
+Section: utils
+Priority: optional
+Maintainer: Angela <angelad@disroot.org>
+Build-Depends: python3, python3-requests (>=2.12.4)
+Standards-Version: 3.9.8
+Vcs-Git: https://github.com/angela-d/request-headers-checker.git
+Vcs-browser: https://github.com/angela-d/request-headers-checker.git
+
+Package: reqhead
+Architecture: all
+Depends: ${python3:Depends}
+Recommends:
+Homepage: https://github.com/angela-d/request-headers-checker
+Description: Request Headers Checker
+ Obtain information about what your server sends out into the web.

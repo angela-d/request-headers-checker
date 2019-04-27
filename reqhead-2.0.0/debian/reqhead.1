@@ -1,0 +1,56 @@
+.de EX
+.ne 5
+.if n .sp 1
+.if t .sp .5
+.nf
+.in +.5i
+..
+.de EE
+.fi
+.in -.5i
+.if n .sp 1
+.if t .sp .5
+..
+.TH reqhead 1 "April 27, 2019"
+.SH NAME
+reqhead \- A command-line tool to obtain information about what your server sends out into the web.
+.SH SYNOPSIS
+.B Request Headers Checker
+.RI [COMMAND]
+.RI [ARGUMENT]
+.PP
+(Calling "reqhead" without an argument will trigger a prompt to enter a URL you wish to check.)
+.SH DESCRIPTION
+Easily and quickly see what your headers are telling potential bad guys, along with SSL issuance and expiry information.
+.PP
+This program also has commands for special usage.
+.SS "Command example:"
+reqhead https://metallica.com
+.SS "Comand references:"
+.TP
+\fB[no argument]\fR
+A prompt will trigger to ask you for a URL.  Specify the http:// or https:// portion of the URL, too.
+.TP
+\fB--url\fR
+Pass the URL in the initial command and bypass the initial prompt.
+.TP
+\fB-u\fR
+Short-form for passing the URL you wish to check.
+.TP
+\fB--version\fR
+Version of reqhead you have installed.
+.TP
+\fB-v\fR
+Short-form for versioning info.
+.SH SEE ALSO
+None
+.SH BUGS
+See/report bugs at https://github.com/angela-d/request-headers-checker/issues
+.SH AUTHOR
+The text for this page was written by Angela <angelad@disroot.org> for the Debian GNU/Linux system (but may be used by
+others).
+.SH COPYRIGHT
+Copyright  (C) 2019 Angela D.  License GPLv3+: GNU
+GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free  to  change  and  redistribute  it.
+There is NO WARRANTY, to the extent permitted by law.

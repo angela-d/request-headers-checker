@@ -1,0 +1,5 @@
+reqhead (2.0.0) stable; urgency=low
+
+  * v 2.0.0 Expand CLI options and offer deb installer
+
+ -- Angela <angela@disroot.org>  Sat, 27 Apr 2019 12:16:35 -0500
